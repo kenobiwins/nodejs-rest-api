@@ -1,25 +1,17 @@
+const httpError = require("../../helpers/httpErrorsHandlers");
 const { updateContact } = require("../../models/contacts");
-const { updateContactSchema } = require("../../schemas/schemasContacts");
 
 const putContact = async (req, res, next) => {
-  try {
-    const { contactId } = req.params;
-    const { body } = req;
-    const { error } = updateContactSchema.validate(body);
+  const { contactId } = req.params;
+  const { body } = req;
 
-    if (error) {
-      return res.status(400).json({ message: error.details[0].message });
-    }
+  const data = await updateContact(contactId, body);
 
-    const data = await updateContact(contactId, body);
-
-    if (!data) {
-      return res.status(404).json({ message: "contact not found" });
-    }
-    res.json({ message: "contact updated", data });
-  } catch (e) {
-    res.status(500).json({ message: e.message });
+  if (!data) {
+    throw httpError(404);
   }
+
+  res.status(200).json(data);
 };
 
 module.exports = putContact;
