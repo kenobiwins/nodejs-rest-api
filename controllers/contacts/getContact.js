@@ -9,7 +9,7 @@ const getContact = async (req, res, next) => {
     throw httpError(404);
   }
 
-  res.json(data);
+  res.status(200).json(data);
 };
 
 module.exports = getContact;
