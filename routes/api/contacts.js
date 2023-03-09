@@ -14,7 +14,7 @@ router.get("/", asyncMiddleware(controller.getAllContacts));
 router.get("/:contactId", asyncMiddleware(controller.getContact));
 router.post(
   "/",
-  validateBody(addContactSchema, "missing required name field"),
+  validateBody(addContactSchema),
   asyncMiddleware(controller.postContact)
 );
 router.delete("/:contactId", asyncMiddleware(controller.deleteContact));
