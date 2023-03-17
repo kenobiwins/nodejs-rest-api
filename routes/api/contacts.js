@@ -1,30 +1,39 @@
 const express = require("express");
 
 const controller = require("../../controllers/contacts");
-const validateBody = require("../../middlewares/validateBody");
+const {validateBody, validateQueryParams} = require("../../middlewares/validateBody");
+
 const {
-  addContactSchema,
   updateContactSchema,
   updateFavoriteField,
+  addContactSchema,
+  getContactsQueryParam,
 } = require("../../schemas/schemasContacts");
 const asyncMiddleware = require("../../helpers/asyncMiddleware");
 const validateMongooseID = require("../../middlewares/validateMongooseID");
+const validateJwtToken = require("../../middlewares/authValidation");
 
-const router = express.Router();
+const contactsRouter = express.Router();
 
-router.get("/", asyncMiddleware(controller.getAllContacts));
-router.get("/:contactId", validateMongooseID, asyncMiddleware(controller.getContact));
-router.post("/", validateBody(addContactSchema), asyncMiddleware(controller.postContact));
-router.delete("/:contactId", validateMongooseID, asyncMiddleware(controller.deleteContact));
-router.put(
+contactsRouter.all('*',validateJwtToken)
+
+contactsRouter.get(
+  "/",
+  validateQueryParams(getContactsQueryParam, "Wrong query parameter value"),
+  asyncMiddleware(controller.getAllContacts)
+);
+contactsRouter.get("/:contactId", validateMongooseID, asyncMiddleware(controller.getContact));
+contactsRouter.post("/", validateBody(addContactSchema), asyncMiddleware(controller.postContact));
+contactsRouter.delete("/:contactId", validateMongooseID, asyncMiddleware(controller.deleteContact));
+contactsRouter.put(
   "/:contactId",
   validateMongooseID,
   validateBody(updateContactSchema),
   asyncMiddleware(controller.putContact)
 );
-router.patch(
+contactsRouter.patch(
   "/:contactId/favorite",
   validateMongooseID,
   validateBody(updateFavoriteField), asyncMiddleware(controller.updateStatusContact));
 
-module.exports = router;
+module.exports = contactsRouter;

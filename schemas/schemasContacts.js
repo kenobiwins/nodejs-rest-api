@@ -17,8 +17,15 @@ const updateFavoriteField = Joi.object({
   favorite: Joi.boolean().required().messages({ "any.required": `missing field favorite` }),
 });
 
+const getContactsQueryParam = Joi.object({
+  favorite: Joi.boolean().optional(),
+  limit: Joi.number().optional(),
+  page: Joi.number().optional(),
+});
+
 module.exports = {
   addContactSchema,
   updateContactSchema,
   updateFavoriteField,
+  getContactsQueryParam,
 };
