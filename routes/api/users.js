@@ -18,7 +18,7 @@ usersRouter.post(
   validateBody(userSchema, "Error from Joi or other validation library"),
   asyncMiddleware(controller.login)
 );
-usersRouter.get("/logout", validateJwtToken, asyncMiddleware(controller.logout));
+usersRouter.post("/logout", validateJwtToken, asyncMiddleware(controller.logout));
 usersRouter.get("/current", validateJwtToken, asyncMiddleware(controller.getCurrentUserInfo));
 usersRouter.patch(
   "/",
