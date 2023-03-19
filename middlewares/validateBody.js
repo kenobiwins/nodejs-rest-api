@@ -1,14 +1,28 @@
 const httpError = require("../helpers/httpErrorsHandlers");
 
-const validateBody = (schema, message) => {
+const validateType = {
+  BODY: "body",
+  QUERY: "query",
+};
+
+function joiSchemaValidation(schema, reqType = validateType.BODY, errorMessage){
   const func = (req, res, next) => {
-    const { error } = schema.validate(req.body);
+    const data = reqType === validateType.BODY ? req.body : req.query;
+    const { error } = schema.validate(data);
     if (error) {
-      return next(httpError(400,message || error.message));
+      return next(httpError(400, errorMessage || error.message));
     }
     next();
   };
   return func;
 };
 
-module.exports = validateBody;
+function validateBody(schema, message ="") {
+  return joiSchemaValidation(schema, validateType.BODY, message);
+};
+
+function validateQueryParams(schema, message){
+  return joiSchemaValidation(schema, validateType.QUERY, message);
+};
+
+module.exports = { validateBody, validateQueryParams };
