@@ -5,6 +5,7 @@ const { userSchema, subscriptionSchema } = require("../../schemas/schemasUsers")
 const { validateBody } = require("../../middlewares/validateBody");
 const validateJwtToken = require("../../middlewares/authValidation");
 const controller = require("../../controllers/users");
+const uploadImage = require("../../middlewares/uploadImage");
 
 const usersRouter = express.Router();
 
@@ -26,5 +27,11 @@ usersRouter.patch(
   validateBody(subscriptionSchema, "Error from Joi or other validation library"),
   asyncMiddleware(controller.changeSubscription)
 );
+usersRouter.patch(
+  "/avatars",
+  validateJwtToken,
+  uploadImage.single('avatar'),
+  asyncMiddleware(controller.updateUserAvatar)
+);
 
-module.exports = usersRouter
+module.exports = usersRouter;

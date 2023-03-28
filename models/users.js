@@ -1,6 +1,7 @@
 const { Schema, model } = require("mongoose");
-const bcrypt = require('bcrypt')
+const bcrypt = require("bcrypt");
 const { mongooseErrorHandler } = require("../helpers");
+const gravatar = require("gravatar");
 
 const userScheme = new Schema(
   {
@@ -22,6 +23,7 @@ const userScheme = new Schema(
       type: String,
       default: null,
     },
+    avatarURL: { type: String, default: null },
   },
   {
     methods: {
@@ -31,13 +33,17 @@ const userScheme = new Schema(
       comparePasswords(password) {
         return bcrypt.compareSync(password, this.hashedPassword);
       },
+      setAvatar(path = null) {
+        const pathToImg = path ?? gravatar.url(this.email, { s: "250" });
+        this.avatarURL = pathToImg;
+      },
     },
     versionKey: false,
     timestamps: true,
   }
 );
 
-userScheme.post('save', mongooseErrorHandler)
+userScheme.post("save", mongooseErrorHandler);
 const UserModel = model("users", userScheme);
 
-module.exports = UserModel
+module.exports = UserModel;

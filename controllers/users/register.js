@@ -1,7 +1,6 @@
 const { httpError } = require("../../helpers");
 const UserModel = require("../../models/users");
 
-
 const register = async (req, res, next) => {
   const { email, password } = req.body;
 
@@ -12,12 +11,14 @@ const register = async (req, res, next) => {
   // create and save new user
   const newUser = new UserModel({ email });
   newUser.addPassword(password);
+  newUser.setAvatar();
+
   const savedUser = await newUser.save();
   if (!savedUser) throw httpError(500, "Failed to save new user");
 
   // report
-  const { subscription } = savedUser;
-  res.status(201).json({ user: { email, subscription } });
+  const { subscription, token } = savedUser;
+  res.status(201).json({ user: { email, subscription, token } });
 };
 
 module.exports = register;

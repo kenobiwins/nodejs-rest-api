@@ -4,8 +4,8 @@ const { httpError } = require("../helpers");
 const { SECRET_KEY } = process.env;
 
 const validateJwtToken = async (req, res, next) => {
-  const { authorization ='' } = req.headers;
-  const [tokenType, token] = authorization.split(" ") ;
+  const { authorization = "" } = req.headers;
+  const [tokenType, token] = authorization.split(" ");
 
   // validate request string
   if (!authorization || tokenType !== "Bearer") {
