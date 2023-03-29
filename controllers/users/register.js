@@ -17,8 +17,8 @@ const register = async (req, res, next) => {
   if (!savedUser) throw httpError(500, "Failed to save new user");
 
   // report
-  const { subscription, token } = savedUser;
-  res.status(201).json({ user: { email, subscription, token } });
+  const { subscription } = savedUser; // token
+  res.status(201).json({ user: { email, subscription } }); // token
 };
 
 module.exports = register;
