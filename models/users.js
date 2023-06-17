@@ -2,6 +2,7 @@ const { Schema, model } = require("mongoose");
 const bcrypt = require("bcrypt");
 const { mongooseErrorHandler } = require("../helpers");
 const gravatar = require("gravatar");
+const { v4 } = require('uuid')
 
 const userScheme = new Schema(
   {
@@ -24,6 +25,14 @@ const userScheme = new Schema(
       default: null,
     },
     avatarURL: { type: String, default: null },
+    verified: {
+      type: Boolean,
+      default: false,
+    },
+    verificationToken: {
+      type: String,
+      required: [true, "Verify token is required"],
+    },
   },
   {
     methods: {
@@ -36,6 +45,9 @@ const userScheme = new Schema(
       setAvatar(path = null) {
         const pathToImg = path ?? gravatar.url(this.email, { s: "250" });
         this.avatarURL = pathToImg;
+      },
+      addVerificationToken() {
+        this.verificationToken = v4();
       },
     },
     versionKey: false,

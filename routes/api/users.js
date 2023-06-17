@@ -1,7 +1,7 @@
 const express = require("express");
 
 const asyncMiddleware = require("../../helpers/asyncMiddleware");
-const { userSchema, subscriptionSchema } = require("../../schemas/schemasUsers");
+const { userSchema, subscriptionSchema, verifySchema } = require("../../schemas/schemasUsers");
 const { validateBody } = require("../../middlewares/validateBody");
 const validateJwtToken = require("../../middlewares/authValidation");
 const controller = require("../../controllers/users");
@@ -20,7 +20,15 @@ usersRouter.post(
   asyncMiddleware(controller.login)
 );
 usersRouter.post("/logout", validateJwtToken, asyncMiddleware(controller.logout));
+usersRouter.post(
+  "/verify",
+  validateBody(verifySchema, "missing required field email"),
+  asyncMiddleware(controller.resendVerifyEmail)
+);
+
 usersRouter.get("/current", validateJwtToken, asyncMiddleware(controller.getCurrentUserInfo));
+usersRouter.get("/verify/:verificationToken", asyncMiddleware(controller.verify));
+
 usersRouter.patch(
   "/",
   validateJwtToken,
